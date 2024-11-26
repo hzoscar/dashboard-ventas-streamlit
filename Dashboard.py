@@ -102,7 +102,7 @@ fig_fact = px.scatter_geo(fact_ciudades, lat='lat', lon='lon',
                           template='seaborn',
                           hover_name='Lugar de Compra',
                           hover_data ={'lat':False, 'lon':False},
-                          title= 'Facturación por ciudad',key=f"plot_{1}")
+                          title= 'Facturación por ciudad')
 
 fig_fact.update_geos(fitbounds="locations")
 
@@ -110,8 +110,7 @@ fig_facturacion_mensual = px.line(facturacion_mensual, x='Mes', y='Precio',
                                   markers = True, range_y=(0,facturacion_mensual.max()),
                                   color='Año', 
                                   line_dash= 'Año',
-                                  title = 'Facturación mensual',
-                                  key=f"plot_{2}")
+                                  title = 'Facturación mensual')
 
 fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
 
@@ -120,8 +119,7 @@ fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
 fig_facturacion_ciudades = px.bar(fact_ciudades.head(),x='Lugar de Compra',
                                   y='Precio',
                                   text_auto=True,
-                                  title='Top ciudades (Facturacion)',
-                                  key=f"plot_{3}")
+                                  title='Top ciudades (Facturacion)')
 
 fig_facturacion_ciudades.update_layout(yaxis_title='Facturacion')
 
@@ -131,7 +129,7 @@ fig_cantidad_ventas_estado = px.scatter_geo(cantidad_ventas_estado, lat='lat', l
                           template='seaborn',
                           hover_name='Lugar de Compra',
                           hover_data ={'lat':False, 'lon':False},
-                          title= 'Cantidad de ventas por ciudad',key=f"plot_{4}")
+                          title= 'Cantidad de ventas por ciudad')
 
 fig_cantidad_ventas_estado.update_geos(fitbounds="locations")
 
@@ -139,7 +137,7 @@ fig_cantidad_ventas_mensual = px.line(cantidad_ventas_mensuale, x='Mes', y='Cant
                                   markers = True, range_y=(0,cantidad_ventas_mensuale.max()),
                                   color='Año', 
                                   line_dash= 'Año',
-                                  title = 'Cantidad de ventas mensual',key=f"plot_{5}")
+                                  title = 'Cantidad de ventas mensual')
 
 #fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
 
@@ -149,7 +147,7 @@ fig_top_5_estados_cantidad_ventas = px.bar(cantidad_ventas_estado.head().sort_va
                                             text_auto=True,
                                             title=f'Top-5 estados por cantidad de ventas',
                                             color='Lugar de Compra',
-                                            color_discrete_sequence=px.colors.qualitative.Bold,key=f"plot_{6}")
+                                            color_discrete_sequence=px.colors.qualitative.Bold)
 
 
 fig_cantidad_ventas_categoria = px.bar(cantidad_ventas_categoria.head().sort_values('Cantidad de Ventas',ascending=False),
@@ -158,7 +156,7 @@ fig_cantidad_ventas_categoria = px.bar(cantidad_ventas_categoria.head().sort_val
                                             text_auto=True,
                                             title=f'Top-5 Categorias por cantidad de Ventas',
                                             color='Categoría del Producto',
-                                            color_discrete_sequence=px.colors.qualitative.G10,key=f"plot_{7}")
+                                            color_discrete_sequence=px.colors.qualitative.G10)
 
 
 
@@ -179,12 +177,12 @@ with tab1:
 
     with col1:
         st.metric('Facturación', formato_numero(datos['Precio'].sum()),'COP')
-        st.plotly_chart(fig_fact, use_container_width=True)
-        st.plotly_chart(fig_facturacion_ciudades, use_container_width=True)
+        st.plotly_chart(fig_fact, use_container_width=True,key=f"plot_{10}")
+        st.plotly_chart(fig_facturacion_ciudades, use_container_width=True,key=f"plot_{9}")
     with col2:
         st.metric('Cantidad de Ventas', formato_numero(datos.shape[0]))
-        st.plotly_chart(fig_cantidad_ventas_mensual, use_container_width=True)
-        st.plotly_chart(fig_facturacion_cat, use_container_width=True)
+        st.plotly_chart(fig_cantidad_ventas_mensual, use_container_width=True,key=f"plot_{8}")
+        st.plotly_chart(fig_facturacion_cat, use_container_width=True,key=f"plot_{7}")
     #st.dataframe(datos)
     
 with tab2:
@@ -193,12 +191,12 @@ with tab2:
 
     with col1:
         st.metric('Facturación', formato_numero(datos['Precio'].sum()),'COP')
-        st.plotly_chart(fig_cantidad_ventas_estado, use_container_width=True)
-        st.plotly_chart(fig_top_5_estados_cantidad_ventas, use_container_width=True)
+        st.plotly_chart(fig_cantidad_ventas_estado, use_container_width=True,key=f"plot_{1}")
+        st.plotly_chart(fig_top_5_estados_cantidad_ventas, use_container_width=True,key=f"plot_{2}")
     with col2:
         st.metric('Cantidad de Ventas', formato_numero(datos.shape[0]))
-        st.plotly_chart(fig_cantidad_ventas_mensual, use_container_width=True)    
-        st.plotly_chart(fig_cantidad_ventas_categoria,use_container_width=True)
+        st.plotly_chart(fig_cantidad_ventas_mensual, use_container_width=True,key=f"plot_{3}")    
+        st.plotly_chart(fig_cantidad_ventas_categoria,use_container_width=True,key=f"plot_{4}")
         
         
 with tab3:
@@ -213,8 +211,8 @@ with tab3:
                                             x='sum',
                                             y=sum_up_variable.index,
                                             text_auto=True,
-                                            title=f'Top {ct_vendedores} vendedores (Facturacion)',key=f"plot_{8}")
-        st.plotly_chart(fig_facturacion_vendedores)
+                                            title=f'Top {ct_vendedores} vendedores (Facturacion)')
+        st.plotly_chart(fig_facturacion_vendedores,use_container_width=True ,key=f"plot_{5}")
     
     with col2:
         st.metric('Cantidad de Ventas', formato_numero(datos.shape[0]))
@@ -223,5 +221,5 @@ with tab3:
                                             x='count',
                                             y=sum_up_variable_count.index,
                                             text_auto=True,
-                                            title=f'Top {ct_vendedores} vendedores (Cantidad de ventas)',key=f"plot_{9}")
-        st.plotly_chart(fig_cantidad_ventas)
+                                            title=f'Top {ct_vendedores} vendedores (Cantidad de ventas)')
+        st.plotly_chart(fig_cantidad_ventas, use_container_width=True ,key=f"plot_{6}")
