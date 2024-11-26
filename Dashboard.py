@@ -102,7 +102,7 @@ fig_fact = px.scatter_geo(fact_ciudades, lat='lat', lon='lon',
                           template='seaborn',
                           hover_name='Lugar de Compra',
                           hover_data ={'lat':False, 'lon':False},
-                          title= 'Facturación por ciudad')
+                          title= 'Facturación por ciudad',key=f"plot_{1}")
 
 fig_fact.update_geos(fitbounds="locations")
 
@@ -110,7 +110,8 @@ fig_facturacion_mensual = px.line(facturacion_mensual, x='Mes', y='Precio',
                                   markers = True, range_y=(0,facturacion_mensual.max()),
                                   color='Año', 
                                   line_dash= 'Año',
-                                  title = 'Facturación mensual')
+                                  title = 'Facturación mensual',
+                                  key=f"plot_{2}")
 
 fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
 
@@ -119,7 +120,8 @@ fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
 fig_facturacion_ciudades = px.bar(fact_ciudades.head(),x='Lugar de Compra',
                                   y='Precio',
                                   text_auto=True,
-                                  title='Top ciudades (Facturacion)')
+                                  title='Top ciudades (Facturacion)',
+                                  key=f"plot_{3}")
 
 fig_facturacion_ciudades.update_layout(yaxis_title='Facturacion')
 
@@ -129,7 +131,7 @@ fig_cantidad_ventas_estado = px.scatter_geo(cantidad_ventas_estado, lat='lat', l
                           template='seaborn',
                           hover_name='Lugar de Compra',
                           hover_data ={'lat':False, 'lon':False},
-                          title= 'Cantidad de ventas por ciudad')
+                          title= 'Cantidad de ventas por ciudad',key=f"plot_{4}")
 
 fig_cantidad_ventas_estado.update_geos(fitbounds="locations")
 
@@ -137,7 +139,7 @@ fig_cantidad_ventas_mensual = px.line(cantidad_ventas_mensuale, x='Mes', y='Cant
                                   markers = True, range_y=(0,cantidad_ventas_mensuale.max()),
                                   color='Año', 
                                   line_dash= 'Año',
-                                  title = 'Cantidad de ventas mensual')
+                                  title = 'Cantidad de ventas mensual',key=f"plot_{5}")
 
 #fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
 
@@ -147,7 +149,7 @@ fig_top_5_estados_cantidad_ventas = px.bar(cantidad_ventas_estado.head().sort_va
                                             text_auto=True,
                                             title=f'Top-5 estados por cantidad de ventas',
                                             color='Lugar de Compra',
-                                            color_discrete_sequence=px.colors.qualitative.Bold)
+                                            color_discrete_sequence=px.colors.qualitative.Bold,,key=f"plot_{6}")
 
 
 fig_cantidad_ventas_categoria = px.bar(cantidad_ventas_categoria.head().sort_values('Cantidad de Ventas',ascending=False),
@@ -156,7 +158,7 @@ fig_cantidad_ventas_categoria = px.bar(cantidad_ventas_categoria.head().sort_val
                                             text_auto=True,
                                             title=f'Top-5 Categorias por cantidad de Ventas',
                                             color='Categoría del Producto',
-                                            color_discrete_sequence=px.colors.qualitative.G10)
+                                            color_discrete_sequence=px.colors.qualitative.G10,key=f"plot_{7}")
 
 
 
@@ -211,7 +213,7 @@ with tab3:
                                             x='sum',
                                             y=sum_up_variable.index,
                                             text_auto=True,
-                                            title=f'Top {ct_vendedores} vendedores (Facturacion)')
+                                            title=f'Top {ct_vendedores} vendedores (Facturacion)',key=f"plot_{8}")
         st.plotly_chart(fig_facturacion_vendedores)
     
     with col2:
@@ -221,5 +223,5 @@ with tab3:
                                             x='count',
                                             y=sum_up_variable_count.index,
                                             text_auto=True,
-                                            title=f'Top {ct_vendedores} vendedores (Cantidad de ventas)')
+                                            title=f'Top {ct_vendedores} vendedores (Cantidad de ventas)',key=f"plot_{9}")
         st.plotly_chart(fig_cantidad_ventas)
