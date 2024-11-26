@@ -76,7 +76,7 @@ fact_ciudades = datos.drop_duplicates(subset='Lugar de Compra')[['Lugar de Compr
 # Facturacion por mes
 facturacion_mensual = datos.set_index('Fecha de Compra').groupby(pd.Grouper (freq = 'ME'))['Precio'].sum().reset_index()
 facturacion_mensual['Año'] = facturacion_mensual['Fecha de Compra'].dt.year
-facturacion_mensual['Mes'] = facturacion_mensual['Fecha de Compra'].dt.month_name('es')
+facturacion_mensual['Mes'] = facturacion_mensual['Fecha de Compra'].dt.month_name()
 
 # Facturacion por categoria
 facturacion_cat = datos.groupby('Categoría del Producto')[['Precio']].sum().sort_values('Precio',ascending=False) 
@@ -87,7 +87,7 @@ cantidad_ventas_estado = datos['Lugar de Compra'].value_counts().to_frame().rese
 cantidad_ventas_estado = datos.drop_duplicates(subset='Lugar de Compra')[['Lugar de Compra','lat','lon']].merge(cantidad_ventas_estado, on='Lugar de Compra').sort_values('Cantidad de Ventas',ascending=False)
 cantidad_ventas_mensuale = datos.set_index('Fecha de Compra').groupby(pd.Grouper(freq = 'ME')).count().reset_index()[['Fecha de Compra','Producto']].rename(columns={'Producto':'Cantidad de Ventas'})
 cantidad_ventas_mensuale['Año'] = cantidad_ventas_mensuale['Fecha de Compra'].dt.year
-cantidad_ventas_mensuale['Mes'] = cantidad_ventas_mensuale['Fecha de Compra'].dt.month_name('es')
+cantidad_ventas_mensuale['Mes'] = cantidad_ventas_mensuale['Fecha de Compra'].dt.month_name()
 cantidad_ventas_categoria = datos['Categoría del Producto'].value_counts().to_frame().reset_index().rename(columns={'count':'Cantidad de Ventas'})
 
 
