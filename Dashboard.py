@@ -149,7 +149,7 @@ fig_top_5_estados_cantidad_ventas = px.bar(cantidad_ventas_estado.head().sort_va
                                             text_auto=True,
                                             title=f'Top-5 estados por cantidad de ventas',
                                             color='Lugar de Compra',
-                                            color_discrete_sequence=px.colors.qualitative.Bold,,key=f"plot_{6}")
+                                            color_discrete_sequence=px.colors.qualitative.Bold,key=f"plot_{6}")
 
 
 fig_cantidad_ventas_categoria = px.bar(cantidad_ventas_categoria.head().sort_values('Cantidad de Ventas',ascending=False),
