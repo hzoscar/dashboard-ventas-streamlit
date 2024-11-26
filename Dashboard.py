@@ -7,7 +7,6 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-
 ## Funciones
 
 def formato_numero(valor,prefijo=''):
@@ -29,6 +28,7 @@ response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 datos = pd.read_json(soup.pre.contents[0])
 datos['Fecha de Compra'] = pd.to_datetime(datos['Fecha de Compra'], format='%d/%m/%Y')
+
 ## Creacion de features
 
 # Facturacion por ciudad
@@ -43,9 +43,18 @@ facturacion_mensual['Mes'] = facturacion_mensual['Fecha de Compra'].dt.month_nam
 # Facturacion por categoria
 facturacion_cat = datos.groupby('Categoría del Producto')[['Precio']].sum().sort_values('Precio',ascending=False) 
 
+# Cantidad de ventas
+
+cantidad_ventas_estado = datos['Lugar de Compra'].value_counts().to_frame().reset_index().rename(columns={'count':'Cantidad de Ventas'})
+cantidad_ventas_estado = datos.drop_duplicates(subset='Lugar de Compra')[['Lugar de Compra','lat','lon']].merge(cantidad_ventas_estado, on='Lugar de Compra').sort_values('Cantidad de Ventas',ascending=False)
+cantidad_ventas_mensuale = datos.set_index('Fecha de Compra').groupby(pd.Grouper(freq = 'ME')).count().reset_index()[['Fecha de Compra','Producto']].rename(columns={'Producto':'Cantidad de Ventas'})
+cantidad_ventas_mensuale['Año'] = cantidad_ventas_mensuale['Fecha de Compra'].dt.year
+cantidad_ventas_mensuale['Mes'] = cantidad_ventas_mensuale['Fecha de Compra'].dt.month_name('es')
+cantidad_ventas_categoria = datos['Categoría del Producto'].value_counts().to_frame().reset_index().rename(columns={'count':'Cantidad de Ventas'})
+
+
 # Vendedores
 vendedores = pd.DataFrame(datos.groupby('Vendedor')['Precio'].agg(['sum','count']))
-
 
 ## Creacion de graficos
 
@@ -76,6 +85,43 @@ fig_facturacion_ciudades = px.bar(fact_ciudades.head(),x='Lugar de Compra',
 
 fig_facturacion_ciudades.update_layout(yaxis_title='Facturacion')
 
+fig_cantidad_ventas_estado = px.scatter_geo(cantidad_ventas_estado, lat='lat', lon='lon',
+                          scope='south america',
+                          size='Cantidad de Ventas',
+                          template='seaborn',
+                          hover_name='Lugar de Compra',
+                          hover_data ={'lat':False, 'lon':False},
+                          title= 'Cantidad de ventas por ciudad')
+
+fig_cantidad_ventas_estado.update_geos(fitbounds="locations")
+
+fig_cantidad_ventas_mensual = px.line(cantidad_ventas_mensuale, x='Mes', y='Cantidad de Ventas',
+                                  markers = True, range_y=(0,cantidad_ventas_mensuale.max()),
+                                  color='Año', 
+                                  line_dash= 'Año',
+                                  title = 'Cantidad de ventas mensual')
+
+#fig_facturacion_mensual.update_layout(yaxis_title='Facturación')
+
+fig_top_5_estados_cantidad_ventas = px.bar(cantidad_ventas_estado.head().sort_values('Cantidad de Ventas',ascending=False),
+                                            y='Lugar de Compra',
+                                            x='Cantidad de Ventas',
+                                            text_auto=True,
+                                            title=f'Top-5 estados por cantidad de ventas',
+                                            color='Lugar de Compra',
+                                            color_discrete_sequence=px.colors.qualitative.Bold)
+
+
+fig_cantidad_ventas_categoria = px.bar(cantidad_ventas_categoria.head().sort_values('Cantidad de Ventas',ascending=False),
+                                            y='Categoría del Producto',
+                                            x='Cantidad de Ventas',
+                                            text_auto=True,
+                                            title=f'Top-5 Categorias por cantidad de Ventas',
+                                            color='Categoría del Producto',
+                                            color_discrete_sequence=px.colors.qualitative.G10)
+
+
+
 fig_facturacion_cat = px.bar(facturacion_cat,
                              text_auto=True,
                              title='Facturacion por categoria')
@@ -97,20 +143,24 @@ with tab1:
         st.plotly_chart(fig_facturacion_ciudades, use_container_width=True)
     with col2:
         st.metric('Cantidad de Ventas', formato_numero(datos.shape[0]))
-        st.plotly_chart(fig_facturacion_mensual, use_container_width=True)
+        st.plotly_chart(fig_cantidad_ventas_mensual, use_container_width=True)
         st.plotly_chart(fig_facturacion_cat, use_container_width=True)
     #st.dataframe(datos)
     
 with tab2:
-
+    
     col1, col2 = st.columns(2)
 
     with col1:
         st.metric('Facturación', formato_numero(datos['Precio'].sum()),'COP')
-        
+        st.plotly_chart(fig_cantidad_ventas_estado, use_container_width=True)
+        st.plotly_chart(fig_top_5_estados_cantidad_ventas, use_container_width=True)
     with col2:
         st.metric('Cantidad de Ventas', formato_numero(datos.shape[0]))
-            
+        st.plotly_chart(fig_cantidad_ventas_mensual, use_container_width=True)    
+        st.plotly_chart(fig_cantidad_ventas_categoria,use_container_width=True)
+        
+        
 with tab3:
     ct_vendedores = st.number_input('Cantidad de vendedores',2,10,5)
     sum_up_variable = vendedores[['sum']].sort_values('sum').head(ct_vendedores)
